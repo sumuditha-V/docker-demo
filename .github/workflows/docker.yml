@@ -1,0 +1,45 @@
+name: Build and publish
+
+# When the robot wakes up.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    # The machine GitHub gives you, free, for a few minutes.
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write # required to push to GHCR
+
+    steps:
+      # 1. Copy the repo onto that machine.
+      - uses: actions/checkout@v4
+
+      # 2. CI: does the backend image still build? Fails the run if not.
+      - name: Build API image
+        run: docker build ./api
+
+      # 3. Log in to GHCR. GITHUB_TOKEN is created automatically for
+      #    every run -- no personal access token needed here.
+      #    Steps 3 and 4 are skipped on pull requests: PRs get checked,
+      #    but only main is allowed to publish.
+      - name: Log in to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 4. CD: build the frontend and push it.
+      #    Owner is hardcoded lowercase -- GHCR rejects capital letters,
+      #    and the GitHub username here is "sumuditha-V".
+      - name: Build and push web image
+        if: github.event_name == 'push'
+        run: |
+          docker build -t ghcr.io/sumuditha-v/todo-web:latest ./web
+          docker push ghcr.io/sumuditha-v/todo-web:latest
