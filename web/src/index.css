@@ -1,0 +1,134 @@
+:root {
+  --bg: #fafafa;
+  --card: #fff;
+  --border: #e4e4e7;
+  --text: #18181b;
+  --muted: #71717a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+main {
+  max-width: 34rem;
+  margin: 4rem auto;
+  padding: 0 1.5rem;
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+header span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+form input {
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  font: inherit;
+  color: inherit;
+  outline: none;
+}
+
+form input:focus {
+  border-color: var(--muted);
+}
+
+button {
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--text);
+  border-radius: 6px;
+  background: var(--text);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+li span {
+  flex: 1;
+}
+
+li span.done {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+button.delete {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.85rem;
+  padding: 0.25rem 0.4rem;
+  opacity: 0;
+}
+
+/* keep the control reachable by keyboard, not just on hover */
+li:hover button.delete,
+button.delete:focus-visible {
+  opacity: 1;
+}
+
+button.delete:hover {
+  color: var(--text);
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}

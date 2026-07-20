@@ -1,0 +1,46 @@
+services:
+  db:
+    # Dockerizing the database = using the official image. You do NOT write
+    # a Dockerfile for Postgres; that would be reinventing a solved problem.
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todos
+    volumes:
+      # Named volume -> data survives "docker compose down" and rebuilds.
+      # Without this line, every restart gives you an empty database.
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # "Is the container running?" and "is Postgres ready for queries?" are
+      # different questions. pg_isready answers the second one.
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build: ./api
+    environment:
+      # The host is "db" -- the service name above, NOT localhost.
+      # Inside a container, localhost means that container itself.
+      DATABASE_URL: postgres://postgres:postgres@db:5432/todos
+    depends_on:
+      db:
+        # Plain "depends_on: [db]" only waits for the container to start.
+        # server.js runs CREATE TABLE immediately and would crash.
+        # service_healthy waits for the healthcheck above to pass.
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+
+  web:
+    build: ./web
+    ports:
+      # host:container -- browse localhost:8080, nginx listens on 80 inside.
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
